@@ -20,6 +20,7 @@ import static org.apache.lucene.search.DocIdSetIterator.NO_MORE_DOCS;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.apache.lucene.codecs.KnnVectorsReader;
@@ -48,6 +49,8 @@ public class IncrementalHnswGraphMerger implements HnswGraphMerger {
   protected final int beamWidth;
 
   protected List<GraphReader> graphReaders = new ArrayList<>();
+  protected GraphReader largestGraphReader;
+
   private int numReaders = 0;
 
   /** Represents a vector reader that contains graph info. */
@@ -73,7 +76,7 @@ public class IncrementalHnswGraphMerger implements HnswGraphMerger {
   public IncrementalHnswGraphMerger addReader(
       KnnVectorsReader reader, MergeState.DocMap docMap, Bits liveDocs) throws IOException {
     numReaders++;
-    if (hasDeletes(liveDocs) || !(reader instanceof HnswGraphProvider)) {
+    if (!(reader instanceof HnswGraphProvider)) {
       return this;
     }
     HnswGraph graph = ((HnswGraphProvider) reader).getGraph(fieldInfo.name);
@@ -98,7 +101,16 @@ public class IncrementalHnswGraphMerger implements HnswGraphMerger {
         candidateVectorCount = vectorValues.size();
       }
     }
-    graphReaders.add(new GraphReader(reader, docMap, candidateVectorCount));
+
+    GraphReader graphReader = new GraphReader(reader, docMap, candidateVectorCount);
+    if (largestGraphReader == null || candidateVectorCount > largestGraphReader.graphSize) {
+      largestGraphReader = graphReader;
+    }
+
+    if (!hasDeletes(liveDocs)) {
+      graphReaders.add(graphReader);
+    }
+
     return this;
   }
 
@@ -112,11 +124,15 @@ public class IncrementalHnswGraphMerger implements HnswGraphMerger {
    */
   protected HnswBuilder createBuilder(KnnVectorValues mergedVectorValues, int maxOrd)
       throws IOException {
-    if (graphReaders.size() == 0) {
+    if (largestGraphReader == null) {
       return HnswGraphBuilder.create(
           scorerSupplier, M, beamWidth, HnswGraphBuilder.randSeed, maxOrd);
     }
-    graphReaders.sort(Comparator.comparingInt(GraphReader::graphSize).reversed());
+    if (!graphReaders.contains(largestGraphReader)) {
+      graphReaders.addFirst(largestGraphReader);
+    } else {
+      graphReaders.sort(Comparator.comparingInt(GraphReader::graphSize).reversed());
+    }
 
     final BitSet initializedNodes =
         graphReaders.size() == numReaders ? null : new FixedBitSet(maxOrd);
@@ -163,6 +179,7 @@ public class IncrementalHnswGraphMerger implements HnswGraphMerger {
         newDocIdToOldOrdinals[i].put(newDocId, vectorsIter.index());
       }
       oldToNewOrdinalMap[i] = new int[graphReaders.get(i).graphSize];
+      Arrays.fill(oldToNewOrdinalMap[i], -1);
     }
 
     KnnVectorValues.DocIndexIterator mergedVectorIterator = mergedVectorValues.iterator();
