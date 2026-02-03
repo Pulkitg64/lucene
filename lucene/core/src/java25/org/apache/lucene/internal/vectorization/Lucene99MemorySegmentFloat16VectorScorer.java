@@ -24,6 +24,7 @@ import org.apache.lucene.index.VectorSimilarityFunction;
 import org.apache.lucene.store.FilterIndexInput;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.MemorySegmentAccessInput;
+import org.apache.lucene.util.VectorUtil;
 import org.apache.lucene.util.hnsw.RandomVectorScorer;
 
 abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
@@ -33,6 +34,7 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
   final int vectorByteSize;
   final MemorySegment seg;
   final short[] query;
+  final float[] scratchScores = new float[4];
 
   /**
    * Return an optional whose value, if present, is the scorer. Otherwise, an empty optional is
@@ -77,6 +79,57 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
     }
   }
 
+  @Override
+  public float bulkScore(int[] nodes, float[] scores, int numNodes) throws IOException {
+    int i = 0;
+    final int limit = numNodes & ~3;
+    float maxScore = Float.NEGATIVE_INFINITY;
+    for (; i < limit; i += 4) {
+      long offset1 = (long) nodes[i] * vectorByteSize;
+      long offset2 = (long) nodes[i + 1] * vectorByteSize;
+      long offset3 = (long) nodes[i + 2] * vectorByteSize;
+      long offset4 = (long) nodes[i + 3] * vectorByteSize;
+      vectorOp(seg, scratchScores, offset1, offset2, offset3, offset4, query.length);
+      scores[i + 0] = normalizeRawScore(scratchScores[0]);
+      maxScore = Math.max(maxScore, scores[i + 0]);
+      scores[i + 1] = normalizeRawScore(scratchScores[1]);
+      maxScore = Math.max(maxScore, scores[i + 1]);
+      scores[i + 2] = normalizeRawScore(scratchScores[2]);
+      maxScore = Math.max(maxScore, scores[i + 2]);
+      scores[i + 3] = normalizeRawScore(scratchScores[3]);
+      maxScore = Math.max(maxScore, scores[i + 3]);
+    }
+    // Handle remaining 1–3 nodes in bulk (if any)
+    int remaining = numNodes - i;
+    if (remaining > 0) {
+      long addr1 = (long) nodes[i] * vectorByteSize;
+      long addr2 = (remaining > 1) ? (long) nodes[i + 1] * vectorByteSize : addr1;
+      long addr3 = (remaining > 2) ? (long) nodes[i + 2] * vectorByteSize : addr1;
+      vectorOp(seg, scratchScores, addr1, addr2, addr3, addr3, query.length);
+      scores[i] = normalizeRawScore(scratchScores[0]);
+      maxScore = Math.max(maxScore, scores[i]);
+      if (remaining > 1) {
+        scores[i + 1] = normalizeRawScore(scratchScores[1]);
+        maxScore = Math.max(maxScore, scores[i + 1]);
+      }
+      if (remaining > 2) {
+        scores[i + 2] = normalizeRawScore(scratchScores[2]);
+        maxScore = Math.max(maxScore, scores[i + 2]);
+      }
+    }
+    return maxScore;
+  }
+
+  abstract float normalizeRawScore(float value);
+
+  abstract void vectorOp(
+      MemorySegment seg,
+      float[] scores,
+      long node1Offset,
+      long node2Offset,
+      long node3Offset,
+      long node4Offset,
+      int elementCount);
 
   static final class CosineScorer extends Lucene99MemorySegmentFloat16VectorScorer {
 
@@ -93,12 +146,27 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
       // just delegates to existing scorer that copies on-heap
       return VectorSimilarityFunction.COSINE.compare(query, values.vectorValue(node));
     }
+
+    @Override
+    float normalizeRawScore(float rawScore) {
+      return VectorUtil.normalizeToUnitInterval(rawScore);
+    }
+
+    @Override
+    void vectorOp(
+        MemorySegment seg,
+        float[] scores,
+        long node1Offset,
+        long node2Offset,
+        long node3Offset,
+        long node4Offset,
+        int elementCount) {}
   }
 
   static final class DotProductScorer extends Lucene99MemorySegmentFloat16VectorScorer {
 
-    static final MemorySegmentBulkVectorOps.DotProduct DOT_OPS =
-        MemorySegmentBulkVectorOps.DOT_INSTANCE;
+    static final MemorySegmentFloat16BulkVectorOps.DotProduct DOT_OPS =
+        MemorySegmentFloat16BulkVectorOps.DOT_INSTANCE;
 
     DotProductScorer(MemorySegment input, Float16VectorValues values, short[] query) {
       super(input, values, query);
@@ -111,6 +179,23 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
       return VectorSimilarityFunction.DOT_PRODUCT.compare(query, values.vectorValue(node));
     }
 
+    @Override
+    float normalizeRawScore(float rawScore) {
+      return VectorUtil.normalizeToUnitInterval(rawScore);
+    }
+
+    @Override
+    void vectorOp(
+        MemorySegment seg,
+        float[] scores,
+        long node1Offset,
+        long node2Offset,
+        long node3Offset,
+        long node4Offset,
+        int elementCount) {
+      DOT_OPS.dotProductBulk(
+          seg, scores, query, node1Offset, node2Offset, node3Offset, node4Offset, elementCount);
+    }
   }
 
   static final class EuclideanScorer extends Lucene99MemorySegmentFloat16VectorScorer {
@@ -128,6 +213,21 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
       // just delegates to existing scorer that copies on-heap
       return VectorSimilarityFunction.EUCLIDEAN.compare(query, values.vectorValue(node));
     }
+
+    @Override
+    float normalizeRawScore(float rawScore) {
+      return VectorUtil.normalizeDistanceToUnitInterval(rawScore);
+    }
+
+    @Override
+    void vectorOp(
+        MemorySegment seg,
+        float[] scores,
+        long node1Offset,
+        long node2Offset,
+        long node3Offset,
+        long node4Offset,
+        int elementCount) {}
   }
 
   static final class MaxInnerProductScorer extends Lucene99MemorySegmentFloat16VectorScorer {
@@ -146,5 +246,20 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
       return VectorSimilarityFunction.MAXIMUM_INNER_PRODUCT.compare(
           query, values.vectorValue(node));
     }
+
+    @Override
+    float normalizeRawScore(float rawScore) {
+      return VectorUtil.scaleMaxInnerProductScore(rawScore);
+    }
+
+    @Override
+    void vectorOp(
+        MemorySegment seg,
+        float[] scores,
+        long node1Offset,
+        long node2Offset,
+        long node3Offset,
+        long node4Offset,
+        int elementCount) {}
   }
 }

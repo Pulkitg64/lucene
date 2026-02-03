@@ -73,13 +73,6 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
     }
   }
 
-  final void checkOrdinal(int ord) {
-    if (ord < 0 || ord >= maxOrd) {
-      throw new IllegalArgumentException("illegal ordinal: " + ord);
-    }
-  }
-
-
   static final class CosineSupplier extends Lucene99MemorySegmentFloat16VectorScorerSupplier {
 
     static final MemorySegmentBulkVectorOps.Cosine COS_OPS =
@@ -102,32 +95,38 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
 
   static final class DotProductSupplier extends Lucene99MemorySegmentFloat16VectorScorerSupplier {
 
+    static final MemorySegmentFloat16BulkVectorOps.DotProduct DOT_OPS =
+        MemorySegmentFloat16BulkVectorOps.DOT_INSTANCE;
+
     DotProductSupplier(MemorySegment seg, Float16VectorValues values) {
       super(seg, values);
     }
 
     @Override
     public UpdateableRandomVectorScorer scorer() {
-      return new UpdateableRandomVectorScorer.AbstractUpdateableRandomVectorScorer(values) {
-        private int queryOrd = 0;
+      return new AbstractBulkScorer(values) {
+        @Override
+        float vectorOp(MemorySegment seg, long q, long d, int elementCount) {
+          return DOT_OPS.dotProduct(seg, q, d, dims);
+        }
 
         @Override
-        public float score(int node) {
-          checkOrdinal(node);
-          long queryAddr = (long) queryOrd * vectorByteSize;
-          long addr = (long) node * vectorByteSize;
-          float rawScore = vectorOp(seg, queryAddr, addr);
+        void vectorOp(
+            MemorySegment seg,
+            float[] scores,
+            long queryOffset,
+            long node1Offset,
+            long node2Offset,
+            long node3Offset,
+            long node4Offset,
+            int elementCount) {
+          DOT_OPS.dotProductBulk(
+              seg, scores, queryOffset, node1Offset, node2Offset, node3Offset, node4Offset, dims);
+        }
+
+        @Override
+        float normalizeRawScore(float rawScore) {
           return VectorUtil.normalizeToUnitInterval(rawScore);
-        }
-
-        float vectorOp(MemorySegment seg, long q, long d) {
-          return Float.float16ToFloat(PanamaVectorUtilSupport.dotProduct(seg, q, d, dims));
-        }
-
-        @Override
-        public void setScoringOrdinal(int node) {
-          checkOrdinal(node);
-          queryOrd = node;
         }
       };
     }
@@ -179,4 +178,90 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
     }
   }
 
+  abstract class AbstractBulkScorer
+      extends UpdateableRandomVectorScorer.AbstractUpdateableRandomVectorScorer {
+    private int queryOrd;
+    final float[] scratchScores = new float[4];
+
+    AbstractBulkScorer(Float16VectorValues values) {
+      super(values);
+    }
+
+    final void checkOrdinal(int ord) {
+      if (ord < 0 || ord >= maxOrd) {
+        throw new IllegalArgumentException("illegal ordinal: " + ord);
+      }
+    }
+
+    abstract float vectorOp(MemorySegment seg, long q, long d, int elementCount);
+
+    abstract void vectorOp(
+        MemorySegment seg,
+        float[] scores,
+        long queryOffset,
+        long node1Offset,
+        long node2Offset,
+        long node3Offset,
+        long node4Offset,
+        int elementCount);
+
+    abstract float normalizeRawScore(float rawScore);
+
+    @Override
+    public float score(int node) {
+      checkOrdinal(node);
+      long queryAddr = (long) queryOrd * vectorByteSize;
+      long addr = (long) node * vectorByteSize;
+      var raw = vectorOp(seg, queryAddr, addr, dims);
+      return normalizeRawScore(raw);
+    }
+
+    @Override
+    public float bulkScore(int[] nodes, float[] scores, int numNodes) {
+      int i = 0;
+      long queryAddr = (long) queryOrd * vectorByteSize;
+      float maxScore = Float.NEGATIVE_INFINITY;
+      final int limit = numNodes & ~3;
+      for (; i < limit; i += 4) {
+        long offset1 = (long) nodes[i] * vectorByteSize;
+        long offset2 = (long) nodes[i + 1] * vectorByteSize;
+        long offset3 = (long) nodes[i + 2] * vectorByteSize;
+        long offset4 = (long) nodes[i + 3] * vectorByteSize;
+        vectorOp(seg, scratchScores, queryAddr, offset1, offset2, offset3, offset4, dims);
+        scores[i + 0] = normalizeRawScore(scratchScores[0]);
+        maxScore = Math.max(maxScore, scores[i + 0]);
+        scores[i + 1] = normalizeRawScore(scratchScores[1]);
+        maxScore = Math.max(maxScore, scores[i + 1]);
+        scores[i + 2] = normalizeRawScore(scratchScores[2]);
+        maxScore = Math.max(maxScore, scores[i + 2]);
+        scores[i + 3] = normalizeRawScore(scratchScores[3]);
+        maxScore = Math.max(maxScore, scores[i + 3]);
+      }
+      // Handle remaining 1–3 nodes in bulk (if any)
+      int remaining = numNodes - i;
+      if (remaining > 0) {
+        long addr1 = (long) nodes[i] * vectorByteSize;
+        long addr2 = (remaining > 1) ? (long) nodes[i + 1] * vectorByteSize : addr1;
+        long addr3 = (remaining > 2) ? (long) nodes[i + 2] * vectorByteSize : addr1;
+        vectorOp(seg, scratchScores, queryAddr, addr1, addr2, addr3, addr1, dims);
+        scores[i] = normalizeRawScore(scratchScores[0]);
+        maxScore = Math.max(maxScore, scores[i]);
+        if (remaining > 1) {
+          scores[i + 1] = normalizeRawScore(scratchScores[1]);
+          maxScore = Math.max(maxScore, scores[i + 1]);
+        }
+        if (remaining > 2) {
+          scores[i + 2] = normalizeRawScore(scratchScores[2]);
+          maxScore = Math.max(maxScore, scores[i + 2]);
+        }
+      }
+      return maxScore;
+    }
+
+    @Override
+    public void setScoringOrdinal(int node) {
+      checkOrdinal(node);
+      queryOrd = node;
+    }
+  }
 }
