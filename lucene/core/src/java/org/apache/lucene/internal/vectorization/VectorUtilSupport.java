@@ -27,7 +27,9 @@ public interface VectorUtilSupport {
   /** Calculates the dot product of the given float arrays. */
   float dotProduct(float[] a, float[] b);
 
-  /** Calculates the dot product of the given short arrays used when we are using float16 vectors. */
+  /**
+   * Calculates the dot product of the given short arrays used when we are using float16 vectors.
+   */
   short dotProduct(short[] a, short[] b);
 
   /** Returns the cosine similarity between the two vectors. */

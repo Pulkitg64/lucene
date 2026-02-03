@@ -88,9 +88,8 @@ public class DefaultFlatVectorScorer implements FlatVectorsScorer {
 
   @Override
   public RandomVectorScorer getRandomVectorScorer(
-      VectorSimilarityFunction similarityFunction,
-      KnnVectorValues vectorValues,
-      short[] target) throws IOException {
+      VectorSimilarityFunction similarityFunction, KnnVectorValues vectorValues, short[] target)
+      throws IOException {
     assert vectorValues instanceof Float16VectorValues;
     if (target.length != vectorValues.dimension()) {
       throw new IllegalArgumentException(
@@ -194,7 +193,8 @@ public class DefaultFlatVectorScorer implements FlatVectorsScorer {
     private final VectorSimilarityFunction similarityFunction;
 
     private Float16ScoringSupplier(
-        Float16VectorValues vectors, VectorSimilarityFunction similarityFunction) throws IOException {
+        Float16VectorValues vectors, VectorSimilarityFunction similarityFunction)
+        throws IOException {
       this.vectors = vectors;
       targetVectors = vectors.copy();
       this.similarityFunction = similarityFunction;

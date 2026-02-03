@@ -72,11 +72,10 @@ public abstract class KnnVectorsReader implements Closeable {
    */
   public abstract ByteVectorValues getByteVectorValues(String field) throws IOException;
 
-
   /**
-   * Returns the {@link Float16VectorValues} for the given {@code field}. The behavior is undefined if
-   * the given field doesn't have KNN vectors enabled on its {@link FieldInfo}. The return value is
-   * never {@code null}.
+   * Returns the {@link Float16VectorValues} for the given {@code field}. The behavior is undefined
+   * if the given field doesn't have KNN vectors enabled on its {@link FieldInfo}. The return value
+   * is never {@code null}.
    */
   public abstract Float16VectorValues getFloat16VectorValues(String field) throws IOException;
 
@@ -137,7 +136,6 @@ public abstract class KnnVectorsReader implements Closeable {
   public abstract void search(
       String field, byte[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
       throws IOException;
-
 
   /**
    * Return the k nearest neighbor documents as determined by comparison of their vector values for

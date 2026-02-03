@@ -60,7 +60,8 @@ public class TestHnswFloat16VectorGraph extends HnswGraphTestCase<short[]> {
 
   @Override
   MockFloat16VectorValues vectorValues(int size, int dimension) {
-    return MockFloat16VectorValues.fromValues(createRandomFloat16Vectors(size, dimension, random()));
+    return MockFloat16VectorValues.fromValues(
+        createRandomFloat16Vectors(size, dimension, random()));
   }
 
   @Override

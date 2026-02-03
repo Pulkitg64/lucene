@@ -133,7 +133,7 @@ public class ScalarQuantizer {
 
   public float quantize(short[] vector, byte[] dest, VectorSimilarityFunction similarityFunction) {
     float[] floatVector = new float[vector.length];
-    for (int i = 0; i <vector.length; i++) {
+    for (int i = 0; i < vector.length; i++) {
       floatVector[i] = Float.float16ToFloat(vector[i]);
     }
     return quantize(floatVector, dest, similarityFunction);

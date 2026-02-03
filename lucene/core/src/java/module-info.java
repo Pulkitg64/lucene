@@ -21,6 +21,7 @@ module org.apache.lucene.core {
   requires java.logging;
   requires static jdk.management;
   requires java.desktop; // this is optional but explicit declaration is recommended
+  requires static jdk.incubator.vector;
 
   exports org.apache.lucene.analysis.standard;
   exports org.apache.lucene.analysis.tokenattributes;

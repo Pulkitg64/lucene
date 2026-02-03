@@ -44,11 +44,9 @@ public class Lucene99MemorySegmentFlatVectorsScorer implements FlatVectorsScorer
   public RandomVectorScorerSupplier getRandomVectorScorerSupplier(
       VectorSimilarityFunction similarityType, KnnVectorValues vectorValues) throws IOException {
     return switch (vectorValues.getEncoding()) {
-      case FLOAT32 ->
-          getFloatScoringSupplier((FloatVectorValues) vectorValues, similarityType);
+      case FLOAT32 -> getFloatScoringSupplier((FloatVectorValues) vectorValues, similarityType);
       case BYTE -> getByteScorerSupplier((ByteVectorValues) vectorValues, similarityType);
-      case FLOAT16 ->
-          getFloat16ScoringSupplier((Float16VectorValues) vectorValues, similarityType);
+      case FLOAT16 -> getFloat16ScoringSupplier((Float16VectorValues) vectorValues, similarityType);
     };
   }
 
@@ -67,7 +65,8 @@ public class Lucene99MemorySegmentFlatVectorsScorer implements FlatVectorsScorer
   }
 
   private RandomVectorScorerSupplier getFloat16ScoringSupplier(
-      Float16VectorValues vectorValues, VectorSimilarityFunction similarityType) throws IOException {
+      Float16VectorValues vectorValues, VectorSimilarityFunction similarityType)
+      throws IOException {
     if (vectorValues instanceof HasIndexSlice sliceableValues
         && sliceableValues.getSlice() != null) {
       var scorer =

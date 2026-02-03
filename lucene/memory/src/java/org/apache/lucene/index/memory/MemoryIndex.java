@@ -1272,6 +1272,7 @@ public class MemoryIndex {
 
     /** Number of byte vectors added for this field */
     private int byteVectorCount;
+
     private int float16VectorCount;
 
     /** the byte vectors added for this field */
@@ -1798,9 +1799,9 @@ public class MemoryIndex {
         String field, float[] target, KnnCollector knnCollector, AcceptDocs acceptDocs) {}
 
     @Override
-    public void searchNearestVectors(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
-        throws IOException {
-    }
+    public void searchNearestVectors(
+        String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+        throws IOException {}
 
     @Override
     public void searchNearestVectors(

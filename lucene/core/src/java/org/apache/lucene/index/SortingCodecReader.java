@@ -387,7 +387,8 @@ public final class SortingCodecReader extends FilterCodecReader {
     final Float16VectorValues delegate;
     final SortingIteratorSupplier iteratorSupplier;
 
-    SortingFloat16VectorValues(Float16VectorValues delegate, Sorter.DocMap sortMap) throws IOException {
+    SortingFloat16VectorValues(Float16VectorValues delegate, Sorter.DocMap sortMap)
+        throws IOException {
       this.delegate = delegate;
       // SortingValuesIterator consumes the iterator and records the docs and ord mapping
       iteratorSupplier = iteratorSupplier(delegate, sortMap);
@@ -635,7 +636,8 @@ public final class SortingCodecReader extends FilterCodecReader {
       }
 
       @Override
-      public void search(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+      public void search(
+          String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
           throws IOException {
         throw new UnsupportedOperationException();
       }

@@ -309,8 +309,7 @@ public final class Lucene99HnswVectorsReader extends KnnVectorsReader
   @Override
   public void search(String field, float[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
       throws IOException {
-    final FieldEntry fieldEntry =
-        getFieldEntry(field, VectorEncoding.FLOAT32);
+    final FieldEntry fieldEntry = getFieldEntry(field, VectorEncoding.FLOAT32);
     search(
         fieldEntry,
         knnCollector,

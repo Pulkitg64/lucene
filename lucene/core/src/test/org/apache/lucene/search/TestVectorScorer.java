@@ -86,10 +86,10 @@ public class TestVectorScorer extends LuceneTestCase {
       } else if (encoding == VectorEncoding.FLOAT16) {
         short[] v = new short[contents[i].length];
         for (int j = 0; j < v.length; j++) {
-          v[j] =  Float.floatToFloat16(contents[i][j]);
+          v[j] = Float.floatToFloat16(contents[i][j]);
         }
         doc.add(new KnnFloat16VectorField(field, v, EUCLIDEAN));
-      }  else {
+      } else {
         doc.add(new KnnFloatVectorField(field, contents[i]));
       }
       doc.add(new StringField("id", "id" + i, Field.Store.YES));

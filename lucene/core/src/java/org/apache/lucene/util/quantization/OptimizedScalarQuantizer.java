@@ -110,11 +110,12 @@ public class OptimizedScalarQuantizer {
   public QuantizationResult[] multiScalarQuantize(
       short[] vector, byte[][] destinations, byte[] bits, float[] centroid) {
     float[] floatVector = new float[vector.length];
-    for (int i = 0; i <vector.length; i++) {
+    for (int i = 0; i < vector.length; i++) {
       floatVector[i] = Float.float16ToFloat(vector[i]);
     }
     return multiScalarQuantize(floatVector, destinations, bits, centroid);
   }
+
   /**
    * Quantize the vector to the multiple bit levels.
    *
@@ -183,15 +184,15 @@ public class OptimizedScalarQuantizer {
     return results;
   }
 
-
   public QuantizationResult scalarQuantize(
       short[] vector, byte[] destination, byte bits, float[] centroid) {
     float[] floatVector = new float[vector.length];
-    for (int i = 0; i <vector.length; i++) {
+    for (int i = 0; i < vector.length; i++) {
       floatVector[i] = Float.float16ToFloat(vector[i]);
     }
     return scalarQuantize(floatVector, destination, bits, centroid);
   }
+
   /**
    * Quantize the vector to the given bit level.
    *
@@ -201,7 +202,6 @@ public class OptimizedScalarQuantizer {
    * @param centroid centroid to center the vector
    * @return quantization result
    */
-
   public QuantizationResult scalarQuantize(
       float[] vector, byte[] destination, byte bits, float[] centroid) {
     assert similarityFunction != COSINE || VectorUtil.isUnitVector(vector);

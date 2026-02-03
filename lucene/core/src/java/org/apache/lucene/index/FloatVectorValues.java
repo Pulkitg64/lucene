@@ -52,9 +52,7 @@ public abstract class FloatVectorValues extends KnnVectorValues {
    */
   public static void checkField(LeafReader in, String field) {
     FieldInfo fi = in.getFieldInfos().fieldInfo(field);
-    if (fi != null
-        && fi.hasVectorValues()
-        && fi.getVectorEncoding() != VectorEncoding.FLOAT32) {
+    if (fi != null && fi.hasVectorValues() && fi.getVectorEncoding() != VectorEncoding.FLOAT32) {
       throw new IllegalStateException(
           "Inside FloatVectorValues Unexpected vector encoding ("
               + fi.getVectorEncoding()

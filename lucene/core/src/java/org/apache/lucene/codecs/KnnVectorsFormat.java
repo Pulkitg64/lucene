@@ -140,7 +140,7 @@ public abstract class KnnVectorsFormat implements NamedSPILoader.NamedSPI {
             }
 
             @Override
-            public Float16VectorValues getFloat16VectorValues(String field)  {
+            public Float16VectorValues getFloat16VectorValues(String field) {
               throw new UnsupportedOperationException();
             }
 
@@ -157,8 +157,8 @@ public abstract class KnnVectorsFormat implements NamedSPILoader.NamedSPI {
             }
 
             @Override
-            public void search(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
-                {
+            public void search(
+                String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs) {
               throw new UnsupportedOperationException();
             }
 

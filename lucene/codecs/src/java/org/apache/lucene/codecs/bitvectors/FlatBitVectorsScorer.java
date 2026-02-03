@@ -60,9 +60,8 @@ public class FlatBitVectorsScorer implements FlatVectorsScorer {
 
   @Override
   public RandomVectorScorer getRandomVectorScorer(
-      VectorSimilarityFunction similarityFunction,
-      KnnVectorValues vectorValues,
-      short[] target) throws IOException {
+      VectorSimilarityFunction similarityFunction, KnnVectorValues vectorValues, short[] target)
+      throws IOException {
     throw new IllegalArgumentException("bit vectors do not support short[] targets");
   }
 

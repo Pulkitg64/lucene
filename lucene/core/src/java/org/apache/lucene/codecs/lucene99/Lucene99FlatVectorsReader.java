@@ -41,8 +41,6 @@ import org.apache.lucene.index.SegmentReadState;
 import org.apache.lucene.index.VectorEncoding;
 import org.apache.lucene.index.VectorSimilarityFunction;
 import org.apache.lucene.internal.hppc.IntObjectHashMap;
-import org.apache.lucene.search.AcceptDocs;
-import org.apache.lucene.search.KnnCollector;
 import org.apache.lucene.store.ChecksumIndexInput;
 import org.apache.lucene.store.DataAccessHint;
 import org.apache.lucene.store.FileDataHint;
@@ -215,8 +213,7 @@ public final class Lucene99FlatVectorsReader extends FlatVectorsReader {
 
   @Override
   public FloatVectorValues getFloatVectorValues(String field) throws IOException {
-    final FieldEntry fieldEntry =
-        getFieldEntry(field, VectorEncoding.FLOAT32);
+    final FieldEntry fieldEntry = getFieldEntry(field, VectorEncoding.FLOAT32);
     return OffHeapFloatVectorValues.load(
         fieldEntry.similarityFunction,
         vectorScorer,

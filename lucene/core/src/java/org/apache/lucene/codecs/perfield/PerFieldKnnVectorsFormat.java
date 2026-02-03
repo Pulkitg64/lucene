@@ -328,7 +328,8 @@ public abstract class PerFieldKnnVectorsFormat extends KnnVectorsFormat {
     }
 
     @Override
-    public void search(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+    public void search(
+        String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
         throws IOException {
       final FieldInfo info = fieldInfos.fieldInfo(field);
       final KnnVectorsReader reader;

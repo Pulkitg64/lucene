@@ -969,7 +969,8 @@ final class SlowCompositeCodecReaderWrapper extends CodecReader {
       final int[] starts;
       int lastSubIndex;
 
-      MergedFloat16VectorValues(int dimension, int size, List<DocValuesSub<Float16VectorValues>> subs) {
+      MergedFloat16VectorValues(
+          int dimension, int size, List<DocValuesSub<Float16VectorValues>> subs) {
         this.dimension = dimension;
         this.size = size;
         this.subs = subs;
@@ -1120,7 +1121,8 @@ final class SlowCompositeCodecReaderWrapper extends CodecReader {
     }
 
     @Override
-    public void search(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+    public void search(
+        String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
         throws IOException {
       throw new UnsupportedOperationException();
     }

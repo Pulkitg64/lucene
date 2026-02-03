@@ -120,8 +120,9 @@ public enum VectorSimilarityFunction {
     }
 
     @Override
-    public float compare(short[] v1, short[] v2) {return scaleMaxInnerProductScore(dotProduct(v1, v2));
-  }
+    public float compare(short[] v1, short[] v2) {
+      return scaleMaxInnerProductScore(dotProduct(v1, v2));
+    }
   };
 
   /**
@@ -147,8 +148,7 @@ public enum VectorSimilarityFunction {
 
   /**
    * Calculates a similarity score between the two vectors with a specified function. Higher
-   * similarity scores correspond to closer vectors. Each short represents a vector
-   * dimension.
+   * similarity scores correspond to closer vectors. Each short represents a vector dimension.
    *
    * @param v1 a vector
    * @param v2 another vector, of the same dimension

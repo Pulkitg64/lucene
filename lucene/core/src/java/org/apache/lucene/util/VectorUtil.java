@@ -76,7 +76,6 @@ public final class VectorUtil {
     return r;
   }
 
-
   public static float dotProduct(short[] a, short[] b) {
     if (a.length != b.length) {
       throw new IllegalArgumentException("vector dimensions differ: " + a.length + "!=" + b.length);
@@ -84,12 +83,12 @@ public final class VectorUtil {
     float r = Float.float16ToFloat(IMPL.dotProduct(a, b));
     assert Float.isFinite(r)
         : "not finite: "
-        + r
-        + " from <"
-        + java.util.Arrays.toString(a)
-        + ","
-        + java.util.Arrays.toString(b)
-        + ">";
+            + r
+            + " from <"
+            + java.util.Arrays.toString(a)
+            + ","
+            + java.util.Arrays.toString(b)
+            + ">";
     return r;
   }
 
@@ -141,12 +140,12 @@ public final class VectorUtil {
     float r = Float.float16ToFloat(IMPL.squareDistance(a, b));
     assert Float.isFinite(r)
         : "not finite: "
-        + r
-        + " from <"
-        + java.util.Arrays.toString(a)
-        + ","
-        + java.util.Arrays.toString(b)
-        + ">";
+            + r
+            + " from <"
+            + java.util.Arrays.toString(a)
+            + ","
+            + java.util.Arrays.toString(b)
+            + ">";
     return r;
   }
 

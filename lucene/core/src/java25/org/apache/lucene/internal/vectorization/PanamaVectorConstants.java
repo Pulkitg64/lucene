@@ -52,7 +52,8 @@ final class PanamaVectorConstants {
     PREFERRED_DOUBLE_SPECIES =
         VectorSpecies.of(double.class, VectorShape.forBitSize(PREFERRED_VECTOR_BITSIZE));
 
-    PREFERRED_FLOAT16_SPECIES = VectorSpecies.of(Float16.class, VectorShape.forBitSize(PREFERRED_VECTOR_BITSIZE));
+    PREFERRED_FLOAT16_SPECIES =
+        VectorSpecies.of(Float16.class, VectorShape.forBitSize(PREFERRED_VECTOR_BITSIZE));
   }
 
   private PanamaVectorConstants() {}

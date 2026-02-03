@@ -39,8 +39,8 @@ import org.apache.lucene.codecs.hnsw.FlatVectorsWriter;
 import org.apache.lucene.index.ByteVectorValues;
 import org.apache.lucene.index.DocsWithFieldSet;
 import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FloatVectorValues;
 import org.apache.lucene.index.Float16VectorValues;
+import org.apache.lucene.index.FloatVectorValues;
 import org.apache.lucene.index.IndexFileNames;
 import org.apache.lucene.index.KnnVectorValues;
 import org.apache.lucene.index.MergeState;
@@ -442,7 +442,8 @@ public final class Lucene99HnswVectorsWriter extends KnnVectorsWriter {
                   KnnVectorsWriter.MergedVectorValues.mergeFloatVectorValues(fieldInfo, mergeState);
           case FLOAT16 ->
               mergedVectorValues =
-                  KnnVectorsWriter.MergedVectorValues.mergeFloat16VectorValues(fieldInfo, mergeState);
+                  KnnVectorsWriter.MergedVectorValues.mergeFloat16VectorValues(
+                      fieldInfo, mergeState);
         }
         graph =
             merger.merge(
@@ -677,7 +678,6 @@ public final class Lucene99HnswVectorsWriter extends KnnVectorsWriter {
                 beamWidth,
                 infoStream,
                 tinySegmentsThreshold);
-
       };
     }
 

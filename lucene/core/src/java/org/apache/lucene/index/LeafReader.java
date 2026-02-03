@@ -220,8 +220,8 @@ public abstract non-sealed class LeafReader extends IndexReader {
   public abstract FloatVectorValues getFloatVectorValues(String field) throws IOException;
 
   /**
-   * Returns {@link Float16VectorValues} for this field, or null if no {@link Float16VectorValues} were
-   * indexed. The returned instance should only be used by a single thread.
+   * Returns {@link Float16VectorValues} for this field, or null if no {@link Float16VectorValues}
+   * were indexed. The returned instance should only be used by a single thread.
    *
    * @lucene.experimental
    */
@@ -323,7 +323,6 @@ public abstract non-sealed class LeafReader extends IndexReader {
     return collector.topDocs();
   }
 
-
   /**
    * Return the k nearest neighbor documents as determined by comparison of their vector values for
    * this field, to the given vector, by the field's similarity function. The score of each document
@@ -396,7 +395,6 @@ public abstract non-sealed class LeafReader extends IndexReader {
   public abstract void searchNearestVectors(
       String field, float[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
       throws IOException;
-
 
   /**
    * Return the k nearest neighbor documents as determined by comparison of their vector values for

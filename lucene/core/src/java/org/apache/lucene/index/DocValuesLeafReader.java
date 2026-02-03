@@ -62,6 +62,7 @@ abstract class DocValuesLeafReader extends LeafReader {
   public final Float16VectorValues getFloat16VectorValues(String field) throws IOException {
     throw new UnsupportedOperationException();
   }
+
   @Override
   public void searchNearestVectors(
       String field, float[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)

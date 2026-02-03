@@ -197,7 +197,8 @@ public class AssertingKnnVectorsFormat extends KnnVectorsFormat {
     }
 
     @Override
-    public void search(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+    public void search(
+        String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
         throws IOException {
       FieldInfo fi = fis.fieldInfo(field);
       assert fi != null

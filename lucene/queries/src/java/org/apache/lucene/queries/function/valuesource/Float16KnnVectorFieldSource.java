@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.lucene.index.Float16VectorValues;
-import org.apache.lucene.index.FloatVectorValues;
 import org.apache.lucene.index.KnnVectorValues;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;

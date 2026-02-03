@@ -177,7 +177,7 @@ public class TermVectorLeafReader extends LeafReader {
   }
 
   @Override
-  public Float16VectorValues getFloat16VectorValues(String field)  {
+  public Float16VectorValues getFloat16VectorValues(String field) {
     return null;
   }
 
@@ -191,10 +191,9 @@ public class TermVectorLeafReader extends LeafReader {
       String field, float[] target, KnnCollector knnCollector, AcceptDocs acceptDocs) {}
 
   @Override
-  public void searchNearestVectors(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
-      throws IOException {
-
-  }
+  public void searchNearestVectors(
+      String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+      throws IOException {}
 
   @Override
   public void searchNearestVectors(

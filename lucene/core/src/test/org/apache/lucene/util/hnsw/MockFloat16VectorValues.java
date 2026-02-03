@@ -18,7 +18,6 @@
 package org.apache.lucene.util.hnsw;
 
 import org.apache.lucene.index.Float16VectorValues;
-import org.apache.lucene.index.FloatVectorValues;
 import org.apache.lucene.tests.util.LuceneTestCase;
 import org.apache.lucene.util.ArrayUtil;
 

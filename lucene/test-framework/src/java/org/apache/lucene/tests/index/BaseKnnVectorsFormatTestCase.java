@@ -133,7 +133,8 @@ public abstract class BaseKnnVectorsFormatTestCase extends BaseIndexFileFormatTe
           doc.add(new KnnFloatVectorField("v2", randomNormalizedVector(30), similarityFunction));
       case FLOAT16 ->
           doc.add(
-              new KnnFloat16VectorField("v2", randomNormalizedFloat16Vector(30), similarityFunction));
+              new KnnFloat16VectorField(
+                  "v2", randomNormalizedFloat16Vector(30), similarityFunction));
     }
   }
 

@@ -438,10 +438,9 @@ public class ExitableDirectoryReader extends FilterDirectoryReader {
     }
 
     @Override
-    public void searchNearestVectors(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
-        throws IOException {
-
-    }
+    public void searchNearestVectors(
+        String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+        throws IOException {}
 
     @Override
     public void searchNearestVectors(

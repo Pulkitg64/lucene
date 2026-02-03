@@ -20,7 +20,6 @@ import static org.apache.lucene.search.knn.KnnSearchStrategy.Hnsw.DEFAULT;
 
 import java.io.IOException;
 import java.util.Arrays;
-
 import org.apache.lucene.codecs.KnnVectorsReader;
 import org.apache.lucene.document.KnnFloat16VectorField;
 import org.apache.lucene.document.KnnFloatVectorField;

@@ -194,7 +194,8 @@ public final class SlowCodecReaderWrapper {
       }
 
       @Override
-      public void search(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+      public void search(
+          String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
           throws IOException {
         reader.searchNearestVectors(field, target, knnCollector, acceptDocs);
       }

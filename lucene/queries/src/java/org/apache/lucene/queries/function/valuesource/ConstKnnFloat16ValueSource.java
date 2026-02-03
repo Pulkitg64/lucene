@@ -23,7 +23,6 @@ import java.util.Objects;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
-import org.apache.lucene.util.VectorUtil;
 
 /** Function that returns a constant float vector value for every document. */
 public class ConstKnnFloat16ValueSource extends ValueSource {

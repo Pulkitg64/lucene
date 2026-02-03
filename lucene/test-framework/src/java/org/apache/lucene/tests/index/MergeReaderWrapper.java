@@ -254,7 +254,8 @@ class MergeReaderWrapper extends LeafReader {
   }
 
   @Override
-  public void searchNearestVectors(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
+  public void searchNearestVectors(
+      String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
       throws IOException {
     in.searchNearestVectors(field, target, knnCollector, acceptDocs);
   }

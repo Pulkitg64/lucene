@@ -3195,6 +3195,7 @@ public final class CheckIndex implements Closeable {
     }
     status.totalVectorValues += count;
   }
+
   private static void checkByteVectorValues(
       ByteVectorValues values,
       FieldInfo fieldInfo,
