@@ -80,15 +80,9 @@ public abstract class OffHeapFloatVectorValues extends FloatVectorValues impleme
       return value;
     }
     slice.seek((long) targetOrd * byteSize);
-
     slice.readFloats(value, 0, value.length);
     lastOrd = targetOrd;
     return value;
-  }
-
-  @Override
-  public VectorEncoding getEncoding() {
-    return VectorEncoding.FLOAT32;
   }
 
   public static OffHeapFloatVectorValues load(
@@ -106,7 +100,6 @@ public abstract class OffHeapFloatVectorValues extends FloatVectorValues impleme
     }
     IndexInput bytesSlice = vectorData.slice("vector-data", vectorDataOffset, vectorDataLength);
     int byteSize = dimension * Float.BYTES;
-
     if (configuration.docsWithFieldOffset == -1) {
       return new DenseOffHeapVectorValues(
           dimension,

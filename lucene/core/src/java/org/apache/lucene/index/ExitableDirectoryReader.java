@@ -440,7 +440,10 @@ public class ExitableDirectoryReader extends FilterDirectoryReader {
     @Override
     public void searchNearestVectors(
         String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
-        throws IOException {}
+        throws IOException {
+      AcceptDocs timeoutCheckingAcceptDocs = new ExitableAcceptDocs(acceptDocs);
+      in.searchNearestVectors(field, target, knnCollector, timeoutCheckingAcceptDocs);
+    }
 
     @Override
     public void searchNearestVectors(

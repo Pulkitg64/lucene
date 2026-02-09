@@ -1725,21 +1725,6 @@ public abstract class BaseKnnVectorsFormatTestCase extends BaseIndexFileFormatTe
     return v;
   }
 
-  public static float[] randomFloat16Vector(int dim) {
-    assert dim > 0;
-    float[] v = new float[dim];
-    double squareSum = 0.0;
-    // keep generating until we don't get a zero-length vector
-    while (squareSum == 0.0) {
-      squareSum = 0.0;
-      for (int i = 0; i < dim; i++) {
-        v[i] = Float.float16ToFloat(Float.floatToFloat16(random().nextFloat()));
-        squareSum += v[i] * v[i];
-      }
-    }
-    return v;
-  }
-
   public static short[] randomNormalizedFloat16Vector(int dim) {
     float[] v = randomVector(dim);
     VectorUtil.l2normalize(v);

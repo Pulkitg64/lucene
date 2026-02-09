@@ -290,23 +290,7 @@ public final class Lucene99ScalarQuantizedVectorsReader extends FlatVectorsReade
 
   @Override
   public RandomVectorScorer getRandomVectorScorer(String field, short[] target) throws IOException {
-    final FieldEntry fieldEntry = getFieldEntry(field);
-    if (fieldEntry.scalarQuantizer == null) {
-      return rawVectorsReader.getRandomVectorScorer(field, target);
-    }
-    OffHeapQuantizedByteVectorValues vectorValues =
-        OffHeapQuantizedByteVectorValues.load(
-            fieldEntry.ordToDoc,
-            fieldEntry.dimension,
-            fieldEntry.size,
-            fieldEntry.scalarQuantizer,
-            fieldEntry.similarityFunction,
-            vectorScorer,
-            fieldEntry.compress,
-            fieldEntry.vectorDataOffset,
-            fieldEntry.vectorDataLength,
-            quantizedVectorData);
-    return vectorScorer.getRandomVectorScorer(fieldEntry.similarityFunction, vectorValues, target);
+    throw new UnsupportedOperationException();
   }
 
   @Override

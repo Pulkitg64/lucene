@@ -453,11 +453,8 @@ public final class Lucene99FlatVectorsWriter extends FlatVectorsWriter {
     for (int docV = iter.nextDoc(); docV != NO_MORE_DOCS; docV = iter.nextDoc()) {
       // write vector
       short[] value = float16VectorValues.vectorValue(iter.index());
-      buffer.clear();
-      for (short s : value) {
-        buffer.putShort(s);
-      }
-      output.writeBytes(buffer.array(), buffer.position());
+      buffer.asShortBuffer().put(value);
+      output.writeBytes(buffer.array(), buffer.limit());
       docsWithField.add(docV);
     }
     return docsWithField;

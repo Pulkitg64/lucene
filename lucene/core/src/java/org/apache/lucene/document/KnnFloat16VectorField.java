@@ -18,7 +18,7 @@
 package org.apache.lucene.document;
 
 import java.util.Objects;
-import org.apache.lucene.index.FloatVectorValues;
+import org.apache.lucene.index.Float16VectorValues;
 import org.apache.lucene.index.VectorEncoding;
 import org.apache.lucene.index.VectorSimilarityFunction;
 import org.apache.lucene.search.KnnFloat16VectorQuery;
@@ -26,14 +26,14 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.util.VectorUtil;
 
 /**
- * A field that contains a single floating-point numeric vector (or none) for each document. Vectors
- * are dense - that is, every dimension of a vector contains an explicit value, stored packed into
- * an array (of type float[]) whose length is the vector dimension. Values can be retrieved using
- * {@link FloatVectorValues}, which is a forward-only docID-based iterator and also offers
+ * A field that contains a single float16 numeric vector (or none) for each document. Vectors are
+ * dense - that is, every dimension of a vector contains an explicit value, stored packed into an
+ * array (of type short[]) whose length is the vector dimension. Values can be retrieved using
+ * {@link Float16VectorValues}, which is a forward-only docID-based iterator and also offers
  * random-access by dense ordinal (not docId). {@link VectorSimilarityFunction} may be used to
  * compare vectors at query time (for example as part of result ranking). A {@link
- * KnnFloatVectorField} may be associated with a search similarity function defining the metric used
- * for nearest-neighbor search among vectors of that field.
+ * KnnFloat16VectorField} may be associated with a search similarity function defining the metric
+ * used for nearest-neighbor search among vectors of that field.
  *
  * @lucene.experimental
  */

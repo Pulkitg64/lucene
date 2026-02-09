@@ -24,12 +24,12 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
 
-/** Function that returns a constant float vector value for every document. */
+/** Function that returns a constant float16 vector value for every document. */
 public class ConstKnnFloat16ValueSource extends ValueSource {
   private final short[] vector;
 
   public ConstKnnFloat16ValueSource(short[] constVector) {
-    this.vector = constVector;
+    this.vector = Objects.requireNonNull(constVector, "constVector");
   }
 
   @Override

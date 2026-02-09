@@ -842,7 +842,7 @@ public class MemoryIndex {
         if (vectorField instanceof KnnFloat16VectorField float16VectorField) {
           if (info.float16VectorCount == 1) {
             throw new IllegalArgumentException(
-                "Only one value per field allowed for float vector field ["
+                "Only one value per field allowed for float16 vector field ["
                     + vectorField.name()
                     + "]");
           }
@@ -858,7 +858,7 @@ public class MemoryIndex {
         throw new IllegalArgumentException(
             "Field ["
                 + vectorField.name()
-                + "] is not a float vector field, but the field info is configured for float vectors");
+                + "] is not a float16 vector field, but the field info is configured for float16 vectors");
       }
     }
   }

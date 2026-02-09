@@ -71,7 +71,7 @@ public abstract class VectorFieldFunction extends FunctionValues {
       final VectorEncoding actual = fi.hasVectorValues() ? fi.getVectorEncoding() : null;
       if (expectedEncoding != actual) {
         throw new IllegalStateException(
-            "INside Vector Field Unexpected vector encoding ("
+            "Unexpected vector encoding ("
                 + actual
                 + ") for field "
                 + field

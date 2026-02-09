@@ -223,7 +223,7 @@ public class DefaultFlatVectorScorer implements FlatVectorsScorer {
 
     @Override
     public String toString() {
-      return "FloatScoringSupplier(similarityFunction=" + similarityFunction + ")";
+      return "Float16ScoringSupplier(similarityFunction=" + similarityFunction + ")";
     }
   }
 

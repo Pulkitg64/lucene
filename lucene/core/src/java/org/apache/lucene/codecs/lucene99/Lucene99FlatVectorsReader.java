@@ -21,7 +21,6 @@ import static org.apache.lucene.codecs.lucene99.Lucene99HnswVectorsReader.readSi
 import static org.apache.lucene.codecs.lucene99.Lucene99HnswVectorsReader.readVectorEncoding;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import org.apache.lucene.codecs.CodecUtil;
 import org.apache.lucene.codecs.hnsw.FlatVectorsReader;
@@ -195,20 +194,18 @@ public final class Lucene99FlatVectorsReader extends FlatVectorsReader {
     return entry;
   }
 
-  private FieldEntry getFieldEntry(String field, VectorEncoding... expectedEncoding) {
+  private FieldEntry getFieldEntry(String field, VectorEncoding expectedEncoding) {
     final FieldEntry fieldEntry = getFieldEntryOrThrow(field);
-    for (VectorEncoding expected : expectedEncoding) {
-      if (fieldEntry.vectorEncoding == expected) {
-        return fieldEntry;
-      }
+    if (fieldEntry.vectorEncoding != expectedEncoding) {
+      throw new IllegalArgumentException(
+          "field=\""
+              + field
+              + "\" is encoded as: "
+              + fieldEntry.vectorEncoding
+              + " expected: "
+              + expectedEncoding);
     }
-    throw new IllegalArgumentException(
-        "field=\""
-            + field
-            + "\" is encoded as: "
-            + fieldEntry.vectorEncoding
-            + " expected: "
-            + Arrays.toString(expectedEncoding));
+    return fieldEntry;
   }
 
   @Override
@@ -255,8 +252,7 @@ public final class Lucene99FlatVectorsReader extends FlatVectorsReader {
 
   @Override
   public RandomVectorScorer getRandomVectorScorer(String field, float[] target) throws IOException {
-    final FieldEntry fieldEntry =
-        getFieldEntry(field, VectorEncoding.FLOAT32, VectorEncoding.FLOAT16);
+    final FieldEntry fieldEntry = getFieldEntry(field, VectorEncoding.FLOAT32);
     return vectorScorer.getRandomVectorScorer(
         fieldEntry.similarityFunction,
         OffHeapFloatVectorValues.load(

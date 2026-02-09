@@ -290,20 +290,18 @@ public final class Lucene99HnswVectorsReader extends KnnVectorsReader
     return entry;
   }
 
-  private FieldEntry getFieldEntry(String field, VectorEncoding... expectedEncoding) {
+  private FieldEntry getFieldEntry(String field, VectorEncoding expectedEncoding) {
     final FieldEntry fieldEntry = getFieldEntryOrThrow(field);
-    for (VectorEncoding expected : expectedEncoding) {
-      if (fieldEntry.vectorEncoding == expected) {
-        return fieldEntry;
-      }
+    if (fieldEntry.vectorEncoding != expectedEncoding) {
+      throw new IllegalArgumentException(
+          "field=\""
+              + field
+              + "\" is encoded as: "
+              + fieldEntry.vectorEncoding
+              + " expected: "
+              + expectedEncoding);
     }
-    throw new IllegalArgumentException(
-        "field=\""
-            + field
-            + "\" is encoded as: "
-            + fieldEntry.vectorEncoding
-            + " expected: "
-            + Arrays.toString(expectedEncoding));
+    return fieldEntry;
   }
 
   @Override

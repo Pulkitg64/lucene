@@ -54,7 +54,7 @@ public abstract class FloatVectorValues extends KnnVectorValues {
     FieldInfo fi = in.getFieldInfos().fieldInfo(field);
     if (fi != null && fi.hasVectorValues() && fi.getVectorEncoding() != VectorEncoding.FLOAT32) {
       throw new IllegalStateException(
-          "Inside FloatVectorValues Unexpected vector encoding ("
+          "Unexpected vector encoding ("
               + fi.getVectorEncoding()
               + ") for field "
               + field

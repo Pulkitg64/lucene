@@ -268,7 +268,9 @@ public final class Lucene92HnswVectorsReader extends KnnVectorsReader {
 
   @Override
   public void search(String field, short[] target, KnnCollector knnCollector, AcceptDocs acceptDocs)
-      throws IOException {}
+      throws IOException {
+    throw new UnsupportedOperationException();
+  }
 
   private HnswGraph getGraph(FieldEntry entry) throws IOException {
     IndexInput bytesSlice =

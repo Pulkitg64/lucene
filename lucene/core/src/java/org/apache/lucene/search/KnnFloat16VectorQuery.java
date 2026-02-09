@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.apache.lucene.codecs.KnnVectorsReader;
 import org.apache.lucene.document.KnnFloat16VectorField;
-import org.apache.lucene.document.KnnFloatVectorField;
 import org.apache.lucene.index.FieldInfo;
 import org.apache.lucene.index.Float16VectorValues;
 import org.apache.lucene.index.LeafReader;
@@ -32,7 +31,7 @@ import org.apache.lucene.search.knn.KnnSearchStrategy;
 import org.apache.lucene.util.ArrayUtil;
 
 /**
- * Uses {@link KnnVectorsReader#search(String, float[], KnnCollector, AcceptDocs)} to perform
+ * Uses {@link KnnVectorsReader#search(String, short[], KnnCollector, AcceptDocs)} to perform
  * nearest neighbour search.
  *
  * <p>This query also allows for performing a kNN search subject to a filter. In this case, it first
@@ -81,7 +80,7 @@ public class KnnFloat16VectorQuery extends AbstractKnnVectorQuery {
    * Find the <code>k</code> nearest documents to the target vector according to the vectors in the
    * given field. <code>target</code> vector.
    *
-   * @param field a field that has been indexed as a {@link KnnFloatVectorField}.
+   * @param field a field that has been indexed as a {@link KnnFloat16VectorField}.
    * @param target the target of the search
    * @param k the number of documents to find
    * @param filter a filter applied before the vector search
@@ -106,12 +105,12 @@ public class KnnFloat16VectorQuery extends AbstractKnnVectorQuery {
     KnnCollector knnCollector =
         knnCollectorManager.newCollector(visitedLimit, searchStrategy, context);
     LeafReader reader = context.reader();
-    Float16VectorValues floatVectorValues = reader.getFloat16VectorValues(field);
-    if (floatVectorValues == null) {
+    Float16VectorValues float16VectorValues = reader.getFloat16VectorValues(field);
+    if (float16VectorValues == null) {
       Float16VectorValues.checkField(reader, field);
       return NO_RESULTS;
     }
-    if (Math.min(knnCollector.k(), floatVectorValues.size()) == 0) {
+    if (Math.min(knnCollector.k(), float16VectorValues.size()) == 0) {
       return NO_RESULTS;
     }
     reader.searchNearestVectors(field, target, knnCollector, acceptDocs);
@@ -158,7 +157,7 @@ public class KnnFloat16VectorQuery extends AbstractKnnVectorQuery {
   }
 
   /**
-   * @return the target query vector of the search. Each vector element is a float.
+   * @return the target query vector of the search. Each vector element is a short (float16).
    */
   public short[] getTargetCopy() {
     return ArrayUtil.copyArray(target);

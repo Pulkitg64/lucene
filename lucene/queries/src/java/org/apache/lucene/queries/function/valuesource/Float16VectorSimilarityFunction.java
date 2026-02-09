@@ -21,8 +21,8 @@ import org.apache.lucene.queries.function.FunctionValues;
 import org.apache.lucene.queries.function.ValueSource;
 
 /**
- * <code>FloatVectorSimilarityFunction</code> returns a similarity function between two knn vectors
- * with float elements.
+ * <code>Float16VectorSimilarityFunction</code> returns a similarity function between two knn
+ * vectors with float16 elements.
  */
 public class Float16VectorSimilarityFunction extends VectorSimilarityFunction {
   public Float16VectorSimilarityFunction(

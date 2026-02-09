@@ -29,7 +29,7 @@ import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.DocIdSetIterator;
 
 /**
- * An implementation for retrieving {@link FunctionValues} instances for float knn vectors fields.
+ * An implementation for retrieving {@link FunctionValues} instances for float16 knn vectors fields.
  */
 public class Float16KnnVectorFieldSource extends ValueSource {
   private final String fieldName;

@@ -18,12 +18,12 @@ package org.apache.lucene.index;
 
 import java.io.IOException;
 import java.util.List;
-import org.apache.lucene.document.KnnFloatVectorField;
+import org.apache.lucene.document.KnnFloat16VectorField;
 import org.apache.lucene.search.VectorScorer;
 
 /**
- * This class provides access to per-document floating point vector values indexed as {@link
- * KnnFloatVectorField}.
+ * This class provides access to per-document float16 vector values indexed as {@link
+ * KnnFloat16VectorField}.
  *
  * @lucene.experimental
  */
@@ -66,8 +66,8 @@ public abstract class Float16VectorValues extends KnnVectorValues {
 
   /**
    * Return a {@link VectorScorer} for the given query vector and the current {@link
-   * FloatVectorValues}. When the underlying format quantizes the vectors, this will return a {@link
-   * VectorScorer} that scores against the quantized vectors.
+   * Float16VectorValues}. When the underlying format quantizes the vectors, this will return a
+   * {@link VectorScorer} that scores against the quantized vectors.
    *
    * @param target the query vector
    * @return a {@link VectorScorer} instance or null
@@ -77,11 +77,11 @@ public abstract class Float16VectorValues extends KnnVectorValues {
   }
 
   /**
-   * Rescore using the given query vector and the current {@link FloatVectorValues}. This is unique
-   * from scorer() in that it is explicitly for rescoring an existing set of hits and thus will
-   * often utilize the highest fidelity scoring algorithm available. This is useful when the initial
-   * search used a quantized index or an approximate search algorithm, and now we want to rescore
-   * the hits using the full fidelity vectors. The default implementation is to call {@link
+   * Rescore using the given query vector and the current {@link Float16VectorValues}. This is
+   * unique from scorer() in that it is explicitly for rescoring an existing set of hits and thus
+   * will often utilize the highest fidelity scoring algorithm available. This is useful when the
+   * initial search used a quantized index or an approximate search algorithm, and now we want to
+   * rescore the hits using the full fidelity vectors. The default implementation is to call {@link
    * #scorer(short[])} assuming that the scorer is already the highest fidelity implementation
    * available.
    *
