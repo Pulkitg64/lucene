@@ -56,33 +56,6 @@ public class KnnFloat16VectorField extends Field {
     return type;
   }
 
-  private static FieldType createType(
-      short[] v, VectorSimilarityFunction similarityFunction, VectorEncoding vectorEncoding) {
-    if (v == null) {
-      throw new IllegalArgumentException("vector value must not be null");
-    }
-    int dimension = v.length;
-    if (dimension == 0) {
-      throw new IllegalArgumentException("cannot index an empty vector");
-    }
-    if (similarityFunction == null) {
-      throw new IllegalArgumentException("similarity function must not be null");
-    }
-
-    if (vectorEncoding == null) {
-      throw new IllegalArgumentException("Vector encoding must not be null");
-    }
-
-    if (vectorEncoding != VectorEncoding.FLOAT16) {
-      throw new IllegalArgumentException("Vector encoding must be FLOAT16");
-    }
-
-    FieldType type = new FieldType();
-    type.setVectorAttributes(dimension, vectorEncoding, similarityFunction);
-    type.freeze();
-    return type;
-  }
-
   /**
    * A convenience method for creating a vector field type.
    *
@@ -94,21 +67,6 @@ public class KnnFloat16VectorField extends Field {
       int dimension, VectorSimilarityFunction similarityFunction) {
     FieldType type = new FieldType();
     type.setVectorAttributes(dimension, VectorEncoding.FLOAT16, similarityFunction);
-    type.freeze();
-    return type;
-  }
-
-  /**
-   * A convenience method for creating a vector field type.
-   *
-   * @param dimension dimension of vectors.
-   * @param similarityFunction a function defining vector proximity.
-   * @param vectorEncoding the encoding format for the vector. Currently, supports FLOAT16
-   */
-  public static FieldType createFieldType(
-      int dimension, VectorSimilarityFunction similarityFunction, VectorEncoding vectorEncoding) {
-    FieldType type = new FieldType();
-    type.setVectorAttributes(dimension, vectorEncoding, similarityFunction);
     type.freeze();
     return type;
   }
@@ -157,7 +115,7 @@ public class KnnFloat16VectorField extends Field {
       short[] vector,
       VectorSimilarityFunction similarityFunction,
       VectorEncoding vectorEncoding) {
-    super(name, createType(vector, similarityFunction, vectorEncoding));
+    super(name, createType(vector, similarityFunction));
     fieldsData = vector; // null check done above
   }
 

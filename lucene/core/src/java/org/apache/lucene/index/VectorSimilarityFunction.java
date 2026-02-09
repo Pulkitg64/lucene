@@ -69,8 +69,7 @@ public enum VectorSimilarityFunction {
 
     @Override
     public float compare(short[] v1, short[] v2) {
-
-      return dotProduct(v1, v2);
+      return normalizeToUnitInterval(dotProduct(v1, v2));
     }
   },
 
@@ -93,13 +92,7 @@ public enum VectorSimilarityFunction {
 
     @Override
     public float compare(short[] v1, short[] v2) {
-      float[] v1f = new float[v1.length];
-      float[] v2f = new float[v2.length];
-      for (int i = 0; i < v1.length; i++) {
-        v1f[i] = Float.float16ToFloat(v1[i]);
-        v2f[i] = Float.float16ToFloat(v1[i]);
-      }
-      return normalizeToUnitInterval(cosine(v1f, v2f));
+      return normalizeToUnitInterval(cosine(v1, v2));
     }
   },
 

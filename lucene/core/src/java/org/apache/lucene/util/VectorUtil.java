@@ -48,7 +48,7 @@ import org.apache.lucene.internal.vectorization.VectorizationProvider;
  */
 public final class VectorUtil {
 
-  public static final float EPSILON = 1e-2f;
+  public static final float EPSILON = 1e-3f;
 
   private static final VectorUtilSupport IMPL =
       VectorizationProvider.getInstance().getVectorUtilSupport();
@@ -80,16 +80,16 @@ public final class VectorUtil {
     if (a.length != b.length) {
       throw new IllegalArgumentException("vector dimensions differ: " + a.length + "!=" + b.length);
     }
-    float r = Float.float16ToFloat(IMPL.dotProduct(a, b));
-    assert Float.isFinite(r)
+    float result = IMPL.dotProduct(a, b);
+    assert Float.isFinite(result)
         : "not finite: "
-            + r
+            + result
             + " from <"
             + java.util.Arrays.toString(a)
             + ","
             + java.util.Arrays.toString(b)
             + ">";
-    return r;
+    return result;
   }
 
   /**
@@ -108,6 +108,14 @@ public final class VectorUtil {
 
   /** Returns the cosine similarity between the two vectors. */
   public static float cosine(byte[] a, byte[] b) {
+    if (a.length != b.length) {
+      throw new IllegalArgumentException("vector dimensions differ: " + a.length + "!=" + b.length);
+    }
+    return IMPL.cosine(a, b);
+  }
+
+  /** Returns the cosine similarity between the two vectors. */
+  public static float cosine(short[] a, short[] b) {
     if (a.length != b.length) {
       throw new IllegalArgumentException("vector dimensions differ: " + a.length + "!=" + b.length);
     }
@@ -137,16 +145,9 @@ public final class VectorUtil {
     if (a.length != b.length) {
       throw new IllegalArgumentException("vector dimensions differ: " + a.length + "!=" + b.length);
     }
-    float r = Float.float16ToFloat(IMPL.squareDistance(a, b));
-    assert Float.isFinite(r)
-        : "not finite: "
-            + r
-            + " from <"
-            + java.util.Arrays.toString(a)
-            + ","
-            + java.util.Arrays.toString(b)
-            + ">";
-    return r;
+    float result = IMPL.squareDistance(a, b);
+    assert Float.isFinite(result);
+    return result;
   }
 
   /** Returns the sum of squared differences of the two vectors. */

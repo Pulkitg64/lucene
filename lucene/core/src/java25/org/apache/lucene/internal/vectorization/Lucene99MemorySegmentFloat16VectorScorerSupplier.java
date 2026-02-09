@@ -75,8 +75,8 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
 
   static final class CosineSupplier extends Lucene99MemorySegmentFloat16VectorScorerSupplier {
 
-    static final MemorySegmentBulkVectorOps.Cosine COS_OPS =
-        MemorySegmentBulkVectorOps.COS_INSTANCE;
+    static final MemorySegmentFloat16BulkVectorOps.Cosine COS_OPS =
+        MemorySegmentFloat16BulkVectorOps.COS_INSTANCE;
 
     CosineSupplier(MemorySegment seg, Float16VectorValues values) {
       super(seg, values);
@@ -84,12 +84,36 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
 
     @Override
     public UpdateableRandomVectorScorer scorer() {
-      return null;
+      return new AbstractBulkScorer(values) {
+        @Override
+        float vectorOp(MemorySegment seg, long q, long d, int elementCount) {
+          return COS_OPS.cosine(seg, q, d, dims);
+        }
+
+        @Override
+        void vectorOp(
+            MemorySegment seg,
+            float[] scores,
+            long queryOffset,
+            long node1Offset,
+            long node2Offset,
+            long node3Offset,
+            long node4Offset,
+            int elementCount) {
+          COS_OPS.cosineBulk(
+              seg, scores, queryOffset, node1Offset, node2Offset, node3Offset, node4Offset, dims);
+        }
+
+        @Override
+        float normalizeRawScore(float rawScore) {
+          return VectorUtil.normalizeToUnitInterval(rawScore);
+        }
+      };
     }
 
     @Override
     public CosineSupplier copy() throws IOException {
-      return new CosineSupplier(seg, values.copy()); // TODO: check copy
+      return new CosineSupplier(seg, values.copy());
     }
   }
 
@@ -139,8 +163,8 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
 
   static final class EuclideanSupplier extends Lucene99MemorySegmentFloat16VectorScorerSupplier {
 
-    static final MemorySegmentBulkVectorOps.SqrDistance SQR_OPS =
-        MemorySegmentBulkVectorOps.SQR_INSTANCE;
+    static final MemorySegmentFloat16BulkVectorOps.SqrDistance SQR_OPS =
+        MemorySegmentFloat16BulkVectorOps.SQR_INSTANCE;
 
     EuclideanSupplier(MemorySegment seg, Float16VectorValues values) {
       super(seg, values);
@@ -148,20 +172,44 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
 
     @Override
     public UpdateableRandomVectorScorer scorer() {
-      return null;
+      return new AbstractBulkScorer(values) {
+        @Override
+        float vectorOp(MemorySegment seg, long q, long d, int elementCount) {
+          return SQR_OPS.sqrDistance(seg, q, d, dims);
+        }
+
+        @Override
+        void vectorOp(
+            MemorySegment seg,
+            float[] scores,
+            long queryOffset,
+            long node1Offset,
+            long node2Offset,
+            long node3Offset,
+            long node4Offset,
+            int elementCount) {
+          SQR_OPS.sqrDistanceBulk(
+              seg, scores, queryOffset, node1Offset, node2Offset, node3Offset, node4Offset, dims);
+        }
+
+        @Override
+        float normalizeRawScore(float rawScore) {
+          return VectorUtil.normalizeDistanceToUnitInterval(rawScore);
+        }
+      };
     }
 
     @Override
     public EuclideanSupplier copy() throws IOException {
-      return new EuclideanSupplier(seg, values); // TODO: need to copy ?
+      return new EuclideanSupplier(seg, values);
     }
   }
 
   static final class MaxInnerProductSupplier
       extends Lucene99MemorySegmentFloat16VectorScorerSupplier {
 
-    static final MemorySegmentBulkVectorOps.DotProduct DOT_OPS =
-        MemorySegmentBulkVectorOps.DOT_INSTANCE;
+    static final MemorySegmentFloat16BulkVectorOps.DotProduct DOT_OPS =
+        MemorySegmentFloat16BulkVectorOps.DOT_INSTANCE;
 
     MaxInnerProductSupplier(MemorySegment seg, Float16VectorValues values) {
       super(seg, values);
@@ -169,7 +217,31 @@ public abstract sealed class Lucene99MemorySegmentFloat16VectorScorerSupplier
 
     @Override
     public UpdateableRandomVectorScorer scorer() {
-      return null;
+      return new AbstractBulkScorer(values) {
+        @Override
+        float vectorOp(MemorySegment seg, long q, long d, int elementCount) {
+          return DOT_OPS.dotProduct(seg, q, d, dims);
+        }
+
+        @Override
+        void vectorOp(
+            MemorySegment seg,
+            float[] scores,
+            long queryOffset,
+            long node1Offset,
+            long node2Offset,
+            long node3Offset,
+            long node4Offset,
+            int elementCount) {
+          DOT_OPS.dotProductBulk(
+              seg, scores, queryOffset, node1Offset, node2Offset, node3Offset, node4Offset, dims);
+        }
+
+        @Override
+        float normalizeRawScore(float rawScore) {
+          return VectorUtil.scaleMaxInnerProductScore(rawScore);
+        }
+      };
     }
 
     @Override

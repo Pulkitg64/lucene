@@ -104,7 +104,7 @@ public class TestHnswFloatVectorGraph extends HnswGraphTestCase<float[]> {
 
   @Override
   Field knnVectorField(String name, float[] vector, VectorSimilarityFunction similarityFunction) {
-    return new KnnFloatVectorField(name, vector, similarityFunction, VectorEncoding.FLOAT32);
+    return new KnnFloatVectorField(name, vector, similarityFunction);
   }
 
   @Override

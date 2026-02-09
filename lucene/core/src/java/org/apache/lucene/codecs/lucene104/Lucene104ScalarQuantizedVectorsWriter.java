@@ -451,7 +451,7 @@ public class Lucene104ScalarQuantizedVectorsWriter extends FlatVectorsWriter {
     byte[] toQuery = new byte[encoding.getQueryPackedLength(discretizedDims)];
     KnnVectorValues.DocIndexIterator iterator = knnVectorValues.iterator();
     for (int docV = iterator.nextDoc(); docV != NO_MORE_DOCS; docV = iterator.nextDoc()) {
-      // write index vecto
+      // write index vector
       OptimizedScalarQuantizer.QuantizationResult[] r = null;
       if (vectorEncoding == VectorEncoding.FLOAT32) {
         r =
@@ -762,45 +762,55 @@ public class Lucene104ScalarQuantizedVectorsWriter extends FlatVectorsWriter {
       KnnVectorsReader knnVectorsReader = mergeState.knnVectorsReaders[i];
       if (knnVectorsReader == null) continue;
 
-      if (vectorEncoding == VectorEncoding.FLOAT32) {
-        FloatVectorValues vectorValues =
-            mergeState.knnVectorsReaders[i].getFloatVectorValues(fieldInfo.name);
-        if (vectorValues == null) {
-          continue;
-        }
-        KnnVectorValues.DocIndexIterator iterator = vectorValues.iterator();
-        for (int doc = iterator.nextDoc(); doc != NO_MORE_DOCS; doc = iterator.nextDoc()) {
-          ++count;
-          float[] vector = vectorValues.vectorValue(iterator.index());
-          for (int j = 0; j < vector.length; j++) {
-            centroid[j] += vector[j];
-          }
-        }
-      } else if (vectorEncoding == VectorEncoding.FLOAT16) {
-        Float16VectorValues vectorValues =
-            mergeState.knnVectorsReaders[i].getFloat16VectorValues(fieldInfo.name);
-        if (vectorValues == null) {
-          continue;
-        }
-        KnnVectorValues.DocIndexIterator iterator = vectorValues.iterator();
-        for (int doc = iterator.nextDoc(); doc != NO_MORE_DOCS; doc = iterator.nextDoc()) {
-          ++count;
-          short[] vector = vectorValues.vectorValue(iterator.index());
-          for (int j = 0; j < vector.length; j++) {
-            centroid[j] += Float.float16ToFloat(vector[j]);
-          }
-        }
-      }
+      count += accumulateCentroid(knnVectorsReader, fieldInfo, vectorEncoding, centroid);
     }
+
     if (count == 0) {
       return count;
     }
+
     for (int i = 0; i < centroid.length; i++) {
       centroid[i] /= count;
     }
+
     if (fieldInfo.getVectorSimilarityFunction() == COSINE) {
       VectorUtil.l2normalize(centroid);
     }
+
+    return count;
+  }
+
+  private static int accumulateCentroid(
+      KnnVectorsReader reader, FieldInfo fieldInfo, VectorEncoding encoding, float[] centroid)
+      throws IOException {
+    int count = 0;
+
+    if (encoding == VectorEncoding.FLOAT32) {
+      FloatVectorValues vectorValues = reader.getFloatVectorValues(fieldInfo.name);
+      if (vectorValues == null) return 0;
+
+      KnnVectorValues.DocIndexIterator iterator = vectorValues.iterator();
+      for (int doc = iterator.nextDoc(); doc != NO_MORE_DOCS; doc = iterator.nextDoc()) {
+        count++;
+        float[] vector = vectorValues.vectorValue(iterator.index());
+        for (int j = 0; j < vector.length; j++) {
+          centroid[j] += vector[j];
+        }
+      }
+    } else if (encoding == VectorEncoding.FLOAT16) {
+      Float16VectorValues vectorValues = reader.getFloat16VectorValues(fieldInfo.name);
+      if (vectorValues == null) return 0;
+
+      KnnVectorValues.DocIndexIterator iterator = vectorValues.iterator();
+      for (int doc = iterator.nextDoc(); doc != NO_MORE_DOCS; doc = iterator.nextDoc()) {
+        count++;
+        short[] vector = vectorValues.vectorValue(iterator.index());
+        for (int j = 0; j < vector.length; j++) {
+          centroid[j] += Float.float16ToFloat(vector[j]);
+        }
+      }
+    }
+
     return count;
   }
 

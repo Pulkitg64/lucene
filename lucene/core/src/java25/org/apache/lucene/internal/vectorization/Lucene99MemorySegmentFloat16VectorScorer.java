@@ -133,8 +133,8 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
 
   static final class CosineScorer extends Lucene99MemorySegmentFloat16VectorScorer {
 
-    static final MemorySegmentBulkVectorOps.Cosine COS_OPS =
-        MemorySegmentBulkVectorOps.COS_INSTANCE;
+    static final MemorySegmentFloat16BulkVectorOps.Cosine COS_OPS =
+        MemorySegmentFloat16BulkVectorOps.COS_INSTANCE;
 
     CosineScorer(MemorySegment seg, Float16VectorValues values, short[] query) {
       super(seg, values, query);
@@ -143,7 +143,6 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
     @Override
     public float score(int node) throws IOException {
       checkOrdinal(node);
-      // just delegates to existing scorer that copies on-heap
       return VectorSimilarityFunction.COSINE.compare(query, values.vectorValue(node));
     }
 
@@ -160,7 +159,10 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
         long node2Offset,
         long node3Offset,
         long node4Offset,
-        int elementCount) {}
+        int elementCount) {
+      COS_OPS.cosineBulk(
+          seg, scores, query, node1Offset, node2Offset, node3Offset, node4Offset, elementCount);
+    }
   }
 
   static final class DotProductScorer extends Lucene99MemorySegmentFloat16VectorScorer {
@@ -200,8 +202,8 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
 
   static final class EuclideanScorer extends Lucene99MemorySegmentFloat16VectorScorer {
 
-    static final MemorySegmentBulkVectorOps.SqrDistance SQR_OPS =
-        MemorySegmentBulkVectorOps.SQR_INSTANCE;
+    static final MemorySegmentFloat16BulkVectorOps.SqrDistance SQR_OPS =
+        MemorySegmentFloat16BulkVectorOps.SQR_INSTANCE;
 
     EuclideanScorer(MemorySegment seg, Float16VectorValues values, short[] query) {
       super(seg, values, query);
@@ -210,7 +212,6 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
     @Override
     public float score(int node) throws IOException {
       checkOrdinal(node);
-      // just delegates to existing scorer that copies on-heap
       return VectorSimilarityFunction.EUCLIDEAN.compare(query, values.vectorValue(node));
     }
 
@@ -227,13 +228,16 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
         long node2Offset,
         long node3Offset,
         long node4Offset,
-        int elementCount) {}
+        int elementCount) {
+      SQR_OPS.sqrDistanceBulk(
+          seg, scores, query, node1Offset, node2Offset, node3Offset, node4Offset, elementCount);
+    }
   }
 
   static final class MaxInnerProductScorer extends Lucene99MemorySegmentFloat16VectorScorer {
 
-    static final MemorySegmentBulkVectorOps.DotProduct DOT_OPS =
-        MemorySegmentBulkVectorOps.DOT_INSTANCE;
+    static final MemorySegmentFloat16BulkVectorOps.DotProduct DOT_OPS =
+        MemorySegmentFloat16BulkVectorOps.DOT_INSTANCE;
 
     MaxInnerProductScorer(MemorySegment seg, Float16VectorValues values, short[] query) {
       super(seg, values, query);
@@ -242,7 +246,6 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
     @Override
     public float score(int node) throws IOException {
       checkOrdinal(node);
-      // just delegates to existing scorer that copies on-heap
       return VectorSimilarityFunction.MAXIMUM_INNER_PRODUCT.compare(
           query, values.vectorValue(node));
     }
@@ -260,6 +263,9 @@ abstract sealed class Lucene99MemorySegmentFloat16VectorScorer
         long node2Offset,
         long node3Offset,
         long node4Offset,
-        int elementCount) {}
+        int elementCount) {
+      DOT_OPS.dotProductBulk(
+          seg, scores, query, node1Offset, node2Offset, node3Offset, node4Offset, elementCount);
+    }
   }
 }
