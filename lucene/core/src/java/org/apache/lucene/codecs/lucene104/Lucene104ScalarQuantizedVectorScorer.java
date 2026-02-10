@@ -135,9 +135,9 @@ public class Lucene104ScalarQuantizedVectorScorer implements FlatVectorsScorer {
       // for asymmetric encodings with 4-bit query, we need to transpose the nibbles for fast
       // scoring comparisons
       if (scalarEncoding
-          == Lucene104ScalarQuantizedVectorsFormat.ScalarEncoding.SINGLE_BIT_QUERY_NIBBLE
+              == Lucene104ScalarQuantizedVectorsFormat.ScalarEncoding.SINGLE_BIT_QUERY_NIBBLE
           || scalarEncoding
-          == Lucene104ScalarQuantizedVectorsFormat.ScalarEncoding.DIBIT_QUERY_NIBBLE) {
+              == Lucene104ScalarQuantizedVectorsFormat.ScalarEncoding.DIBIT_QUERY_NIBBLE) {
         OptimizedScalarQuantizer.transposeHalfByte(scratch, targetQuantized);
       }
       return new RandomVectorScorer.AbstractRandomVectorScorer(qv) {

@@ -1122,7 +1122,7 @@ public class Lucene104ScalarQuantizedVectorsWriter extends FlatVectorsWriter {
       this.packed =
           switch (encoding) {
             case UNSIGNED_BYTE, SEVEN_BIT -> this.quantized;
-            case PACKED_NIBBLE, SINGLE_BIT_QUERY_NIBBLE ->
+            case PACKED_NIBBLE, SINGLE_BIT_QUERY_NIBBLE, DIBIT_QUERY_NIBBLE ->
                 new byte[encoding.getDocPackedLength(quantized.length)];
           };
       this.centroid = centroid;

@@ -322,7 +322,7 @@ public abstract class KnnVectorsWriter implements Accountable, Closeable {
     public static FloatVectorValues mergeFloatVectorValues(
         FieldInfo fieldInfo, MergeState mergeState) throws IOException {
       validateFieldEncoding(fieldInfo, VectorEncoding.FLOAT32);
-      return new MergedFloatVectorValues(
+      return new MergedFloat32VectorValues(
           mergeVectorValues(
               mergeState.knnVectorsReaders,
               mergeState.docMaps,
