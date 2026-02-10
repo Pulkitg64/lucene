@@ -900,16 +900,12 @@ public abstract class BaseKnnVectorsFormatTestCase extends BaseIndexFileFormatTe
               }
               case FLOAT32 -> {
                 float[] v = randomNormalizedVector(fieldDims[field]);
-                doc.add(
-                    new KnnFloatVectorField(
-                        fieldName, v, fieldSimilarityFunctions[field]));
+                doc.add(new KnnFloatVectorField(fieldName, v, fieldSimilarityFunctions[field]));
                 fieldTotals[field] += v[0];
               }
               case FLOAT16 -> {
                 short[] v = randomNormalizedFloat16Vector(fieldDims[field]);
-                doc.add(
-                    new KnnFloat16VectorField(
-                        fieldName, v, fieldSimilarityFunctions[field]));
+                doc.add(new KnnFloat16VectorField(fieldName, v, fieldSimilarityFunctions[field]));
                 fieldTotals[field] += v[0];
               }
             }
@@ -1880,14 +1876,12 @@ public abstract class BaseKnnVectorsFormatTestCase extends BaseIndexFileFormatTe
             case FLOAT32 -> {
               float[] v = randomNormalizedVector(dim);
               fieldValuesCheckSum += v[0];
-              doc.add(
-                  new KnnFloatVectorField("knn_vector", v, similarityFunction));
+              doc.add(new KnnFloatVectorField("knn_vector", v, similarityFunction));
             }
             case FLOAT16 -> {
               short[] v = randomNormalizedFloat16Vector(dim);
               fieldValuesCheckSum += v[0];
-              doc.add(
-                  new KnnFloat16VectorField("knn_vector", v, similarityFunction));
+              doc.add(new KnnFloat16VectorField("knn_vector", v, similarityFunction));
             }
           }
           fieldDocCount++;

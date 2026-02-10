@@ -700,24 +700,21 @@ public class Lucene104ScalarQuantizedVectorsWriter extends FlatVectorsWriter {
       }
 
       int vectorCount;
-      switch (fieldInfo.getVectorEncoding()) {
-        case FLOAT32 -> {
-          var values = knnVectorsReader.getFloatVectorValues(fieldInfo.name);
-          if (values == null) {
-            continue;
-          }
-          vectorCount = values.size();
-        }
-        case FLOAT16 -> {
-          var values = knnVectorsReader.getFloat16VectorValues(fieldInfo.name);
-          if (values == null) {
-            continue;
-          }
-          vectorCount = values.size();
-        }
-        default -> {
+      VectorEncoding encoding = fieldInfo.getVectorEncoding();
+      if (encoding == VectorEncoding.FLOAT32) {
+        var values = knnVectorsReader.getFloatVectorValues(fieldInfo.name);
+        if (values == null) {
           continue;
         }
+        vectorCount = values.size();
+      } else if (encoding == VectorEncoding.FLOAT16) {
+        var values = knnVectorsReader.getFloat16VectorValues(fieldInfo.name);
+        if (values == null) {
+          continue;
+        }
+        vectorCount = values.size();
+      } else {
+        continue;
       }
 
       float[] centroid = getCentroid(knnVectorsReader, fieldInfo.name);

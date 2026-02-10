@@ -70,7 +70,7 @@ final class DefaultVectorUtilSupport implements VectorUtilSupport {
 
     float sum = 0f;
     for (int i = 0; i < a.length; i++) {
-      sum = Math.fma(Float.float16ToFloat(a[i]), Float.float16ToFloat(b[i]), sum);
+      sum = Float.float16ToFloat(a[i]) * Float.float16ToFloat(b[i]) + sum;
     }
     return sum;
   }

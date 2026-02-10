@@ -21,7 +21,6 @@ import org.apache.lucene.codecs.hnsw.DefaultFlatVectorScorer;
 import org.apache.lucene.codecs.hnsw.FlatVectorsScorer;
 import org.apache.lucene.codecs.lucene95.HasIndexSlice;
 import org.apache.lucene.index.ByteVectorValues;
-import org.apache.lucene.index.Float16VectorValues;
 import org.apache.lucene.index.FloatVectorValues;
 import org.apache.lucene.index.KnnVectorValues;
 import org.apache.lucene.index.VectorSimilarityFunction;
@@ -46,7 +45,7 @@ public class Lucene99MemorySegmentFlatVectorsScorer implements FlatVectorsScorer
     return switch (vectorValues.getEncoding()) {
       case FLOAT32 -> getFloatScoringSupplier((FloatVectorValues) vectorValues, similarityType);
       case BYTE -> getByteScorerSupplier((ByteVectorValues) vectorValues, similarityType);
-      case FLOAT16 -> getFloat16ScoringSupplier((Float16VectorValues) vectorValues, similarityType);
+      case FLOAT16 -> delegate.getRandomVectorScorerSupplier(similarityType, vectorValues);
     };
   }
 
@@ -56,21 +55,6 @@ public class Lucene99MemorySegmentFlatVectorsScorer implements FlatVectorsScorer
         && sliceableValues.getSlice() != null) {
       var scorer =
           Lucene99MemorySegmentFloatVectorScorerSupplier.create(
-              similarityType, sliceableValues.getSlice(), vectorValues);
-      if (scorer.isPresent()) {
-        return scorer.get();
-      }
-    }
-    return delegate.getRandomVectorScorerSupplier(similarityType, vectorValues);
-  }
-
-  private RandomVectorScorerSupplier getFloat16ScoringSupplier(
-      Float16VectorValues vectorValues, VectorSimilarityFunction similarityType)
-      throws IOException {
-    if (vectorValues instanceof HasIndexSlice sliceableValues
-        && sliceableValues.getSlice() != null) {
-      var scorer =
-          Lucene99MemorySegmentFloat16VectorScorerSupplier.create(
               similarityType, sliceableValues.getSlice(), vectorValues);
       if (scorer.isPresent()) {
         return scorer.get();
@@ -119,17 +103,6 @@ public class Lucene99MemorySegmentFlatVectorsScorer implements FlatVectorsScorer
   public RandomVectorScorer getRandomVectorScorer(
       VectorSimilarityFunction similarityType, KnnVectorValues vectorValues, short[] target)
       throws IOException {
-    FlatVectorsScorer.checkDimensions(target.length, vectorValues.dimension());
-    if (vectorValues instanceof Float16VectorValues fvv
-        && fvv instanceof HasIndexSlice floatVectorValues
-        && floatVectorValues.getSlice() != null) {
-      var scorer =
-          Lucene99MemorySegmentFloat16VectorScorer.create(
-              similarityType, floatVectorValues.getSlice(), fvv, target);
-      if (scorer.isPresent()) {
-        return scorer.get();
-      }
-    }
     return delegate.getRandomVectorScorer(similarityType, vectorValues, target);
   }
 
