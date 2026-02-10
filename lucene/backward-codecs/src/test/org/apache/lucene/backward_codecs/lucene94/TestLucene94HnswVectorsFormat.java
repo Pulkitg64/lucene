@@ -41,6 +41,11 @@ public class TestLucene94HnswVectorsFormat extends BaseKnnVectorsFormatTestCase 
   }
 
   @Override
+  protected boolean supportsFloatVectorFallback() {
+    return false;
+  }
+
+  @Override
   protected VectorEncoding randomVectorEncoding() {
     return random().nextBoolean() ? VectorEncoding.BYTE : VectorEncoding.FLOAT32;
   }

@@ -183,4 +183,9 @@ public class TestLucene102HnswBinaryQuantizedVectorsFormat extends BaseKnnVector
   protected VectorEncoding randomVectorEncoding() {
     return random().nextBoolean() ? VectorEncoding.BYTE : VectorEncoding.FLOAT32;
   }
+
+  @Override
+  protected boolean supportsFloatVectorFallback() {
+    return false;
+  }
 }

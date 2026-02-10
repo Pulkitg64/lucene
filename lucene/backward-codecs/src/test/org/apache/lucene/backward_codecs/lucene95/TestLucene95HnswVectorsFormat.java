@@ -44,4 +44,9 @@ public class TestLucene95HnswVectorsFormat extends BaseKnnVectorsFormatTestCase 
   protected VectorEncoding randomVectorEncoding() {
     return random().nextBoolean() ? VectorEncoding.BYTE : VectorEncoding.FLOAT32;
   }
+
+  @Override
+  protected boolean supportsFloatVectorFallback() {
+    return false;
+  }
 }
