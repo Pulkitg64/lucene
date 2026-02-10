@@ -75,46 +75,6 @@ final class DefaultVectorUtilSupport implements VectorUtilSupport {
     return sum;
   }
 
-  //
-  //  @Override
-  //  public short dotProduct(short[] a, short[] b) {
-  //    assert a.length == b.length : "Vector lengths must match";
-  //    Float16 sum = Float16.valueOf(0);
-  //    for (int i = 0; i < a.length; i++) {
-  //      sum = Float16.fma(Float16.shortBitsToFloat16(a[i]), Float16.shortBitsToFloat16(b[i]),
-  // sum);
-  //    }
-  //    return sum.shortValue();
-  //
-  //  }
-
-  //  @Override
-  //  public short dotProduct(short[] a, short[] b) {
-  //    float res = 0f;
-  //    int i = 0;
-  //
-  //    // if the array is big, unroll it
-  //    if (a.length > 32) {
-  //      float acc1 = 0f;
-  //      float acc2 = 0f;
-  //      float acc3 = 0f;
-  //      float acc4 = 0f;
-  //      int upperBound = a.length & ~(4 - 1);
-  //      for (; i < upperBound; i += 4) {
-  //        acc1 = fma(Float.float16ToFloat(a[i]),     Float.float16ToFloat(b[i]),     acc1);
-  //        acc2 = fma(Float.float16ToFloat(a[i + 1]), Float.float16ToFloat(b[i + 1]), acc2);
-  //        acc3 = fma(Float.float16ToFloat(a[i + 2]), Float.float16ToFloat(b[i + 2]), acc3);
-  //        acc4 = fma(Float.float16ToFloat(a[i + 3]), Float.float16ToFloat(b[i + 3]), acc4);
-  //      }
-  //      res += acc1 + acc2 + acc3 + acc4;
-  //    }
-  //
-  //    for (; i < a.length; i++) {
-  //      res = fma(Float.float16ToFloat(a[i]), Float.float16ToFloat(b[i]), res);
-  //    }
-  //    return Float.floatToFloat16(res);
-  //  }
-
   @Override
   public float cosine(float[] a, float[] b) {
     float sum = 0.0f;

@@ -48,7 +48,7 @@ import org.apache.lucene.internal.vectorization.VectorizationProvider;
  */
 public final class VectorUtil {
 
-  public static final float EPSILON = 1e-3f;
+  public static final float EPSILON = 1e-4f;
 
   private static final VectorUtilSupport IMPL =
       VectorizationProvider.getInstance().getVectorUtilSupport();

@@ -321,15 +321,7 @@ public class VectorUtilBenchmark {
   }
 
   @Benchmark
-  @Fork(
-      value = 15,
-      jvmArgsPrepend = {"--add-modules=jdk.incubator.vector"})
-  public float shortDotProduct() {
-    return VectorUtil.dotProduct(shortsA, shortsB);
-  }
-
-  @Benchmark
-  public float shortDotProductScalar1() {
+  public float shortDotProductScalar() {
     return VectorUtil.dotProduct(shortsA, shortsB);
   }
 

@@ -292,19 +292,19 @@ public class Lucene104ScalarQuantizedVectorsReader extends FlatVectorsReader
 
     Float16VectorValues rawFloatVectorValues = rawVectorsReader.getFloat16VectorValues(field);
 
-    //    if (rawFloatVectorValues.size() == 0) {
-    //      return OffHeapScalarQuantizedFloatVectorValues.load(
-    //          fi.ordToDocDISIReaderConfiguration,
-    //          fi.dimension,
-    //          fi.size,
-    //          fi.scalarEncoding,
-    //          fi.similarityFunction,
-    //          vectorScorer,
-    //          fi.centroid,
-    //          fi.vectorDataOffset,
-    //          fi.vectorDataLength,
-    //          quantizedVectorData);
-    //    }
+    if (rawFloatVectorValues.size() == 0) {
+      return OffHeapScalarQuantizedFloat16VectorValues.load(
+          fi.ordToDocDISIReaderConfiguration,
+          fi.dimension,
+          fi.size,
+          fi.scalarEncoding,
+          fi.similarityFunction,
+          vectorScorer,
+          fi.centroid,
+          fi.vectorDataOffset,
+          fi.vectorDataLength,
+          quantizedVectorData);
+    }
 
     OffHeapScalarQuantizedVectorValues sqvv =
         OffHeapScalarQuantizedVectorValues.load(
